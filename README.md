@@ -17,3 +17,50 @@ Exemples de fonctionnalités et bénéfices
 * Mettre en avant les bénéfices clés : visibilité en temps réel, réduction des erreurs, process plus rapide, support à la stratégie business
 Points clés à valoriser
 * Un EPM permet l’automatisation, la précision et l’agilité dans la gestion de la performance, essentiels dans un environnement retail où la réactivité et la pertinence des décisions sont cruciales.
+
+Compléments stratégiques
+Différenciation par rapport aux ERP
+
+Précisez que l'EPM complète l'ERP : l'ERP gère les transactions opérationnelles, l'EPM se concentre sur l'analyse, la planification et la consolidation financière
+L'EPM agrège les données de multiples sources (ERP, CRM, systèmes de caisse, e-commerce)
+
+Spécificités retail à accentuer
+
+Saisonnalité : modélisation des pics de ventes (soldes, fêtes, Black Friday)
+Gestion multi-enseignes : consolidation inter-marques pour les groupes retail
+Analyse de la marge : suivi fin de la rentabilité par produit/catégorie après promotions
+Inventaire et turnover : prévisions de stock optimisées pour éviter ruptures et surstocks
+
+Structure de présentation recommandée
+1. Phase d'accroche (5 min)
+
+Partir d'une problématique concrète : "Combien de temps mettez-vous pour consolider vos résultats mensuels ?"
+Chiffres clés : X% d'erreurs dans les reportings manuels, Y jours pour boucler un budget
+
+2. Démonstration de valeur (10 min)
+
+Avant/Après avec métriques : temps de clôture, précision, nombre d'FTE mobilisés
+ROI typique : réduction de 50-70% du temps de reporting, amélioration de 30% de la précision des forecasts
+
+3. Cas d'usage concrets (10 min)
+
+Scénario 1 : Ajustement rapide d'une campagne promo sous-performante
+Scénario 2 : Simulation d'ouverture de nouveaux points de vente
+Scénario 3 : Analyse comparative des performances par zone géographique
+
+4. Roadmap d'implémentation (5 min)
+
+Phase pilote sur un périmètre restreint (1-2 mois)
+Déploiement progressif (3-6 mois)
+Conduite du changement et formation des équipes
+
+Arguments de réassurance
+
+Intégration facile : connecteurs natifs avec les principaux ERP retail (SAP, Oracle, Microsoft)
+Time-to-value rapide : premiers dashboards opérationnels en quelques semaines
+Scalabilité : solutions cloud adaptées à la croissance (nouveaux magasins, pays)
+Conformité : respect des normes comptables (IFRS, normes locales)
+
+Objections fréquentes à anticiper
+ObjectionRéponse"C'est trop complexe"Démo d'interfaces intuitives, formation courte"Trop cher"Calcul du TCO vs coût actuel (temps, erreurs, opportunités manquées)"Nos Excel suffisent"Risques d'erreurs, limites de volumétrie, pas de workflow collaboratif"Timing difficile"Approche modulaire, déploiement par étapes
+Votre positionnement final est excellent : l'EPM comme levier de transformation digitale est le bon angle pour des décideurs retail conscients de la nécessité d'évoluer dans un marché hyper-concurrentiel.
