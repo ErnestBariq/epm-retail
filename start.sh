@@ -73,8 +73,8 @@ create_env_files() {
         log_warning "Création de api/.env"
         cat > api/.env << EOL
 DB_HOST=postgres
-DB_PORT=5433
-DB_NAME=perso
+DB_PORT=5432
+DB_NAME=epm_retail
 DB_USER=postgres
 DB_PASSWORD=admin
 PORT=8008
