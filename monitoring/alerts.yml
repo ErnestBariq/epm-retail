@@ -1,0 +1,194 @@
+# =============================================
+# Règles d'alerte pour EPM Retail
+# =============================================
+
+groups:
+  # =============================================
+  # Alertes API
+  # =============================================
+  - name: api_alerts
+    interval: 30s
+    rules:
+      - alert: APIDown
+        expr: up{job="epm-api"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          component: api
+        annotations:
+          summary: "API EPM Retail est DOWN"
+          description: "L'API n'a pas répondu depuis plus d'une minute"
+
+      - alert: HighAPILatency
+        expr: http_request_duration_seconds{job="epm-api",quantile="0.95"} > 2
+        for: 5m
+        labels:
+          severity: warning
+          component: api
+        annotations:
+          summary: "Latence API élevée"
+          description: "Le p95 de latence est supérieur à 2 secondes : {{ $value }}s"
+
+      - alert: HighAPIErrorRate
+        expr: rate(http_requests_total{job="epm-api",status=~"5.."}[5m]) > 0.05
+        for: 5m
+        labels:
+          severity: warning
+          component: api
+        annotations:
+          summary: "Taux d'erreur API élevé"
+          description: "Plus de 5% d'erreurs 5xx : {{ $value }}"
+
+  # =============================================
+  # Alertes Base de données
+  # =============================================
+  - name: database_alerts
+    interval: 30s
+    rules:
+      - alert: PostgreSQLDown
+        expr: up{job="postgres"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          component: database
+        annotations:
+          summary: "PostgreSQL est DOWN"
+          description: "La base de données n'est pas accessible"
+
+      - alert: DatabaseConnectionsHigh
+        expr: pg_stat_activity_count > 80
+        for: 5m
+        labels:
+          severity: warning
+          component: database
+        annotations:
+          summary: "Nombre de connexions élevé"
+          description: "{{ $value }} connexions actives sur PostgreSQL"
+
+      - alert: DatabaseDiskSpaceLow
+        expr: (pg_database_size_bytes / 1024 / 1024 / 1024) > 8
+        for: 10m
+        labels:
+          severity: warning
+          component: database
+        annotations:
+          summary: "Espace disque BDD faible"
+          description: "La base de données utilise {{ $value }}GB"
+
+      - alert: SlowQueries
+        expr: rate(pg_stat_statements_mean_exec_time[5m]) > 1000
+        for: 5m
+        labels:
+          severity: warning
+          component: database
+        annotations:
+          summary: "Requêtes lentes détectées"
+          description: "Temps moyen d'exécution : {{ $value }}ms"
+
+  # =============================================
+  # Alertes Système
+  # =============================================
+  - name: system_alerts
+    interval: 30s
+    rules:
+      - alert: HighCPUUsage
+        expr: 100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 80
+        for: 5m
+        labels:
+          severity: warning
+          component: system
+        annotations:
+          summary: "Utilisation CPU élevée"
+          description: "CPU à {{ $value }}% sur {{ $labels.instance }}"
+
+      - alert: HighMemoryUsage
+        expr: (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100 > 85
+        for: 5m
+        labels:
+          severity: warning
+          component: system
+        annotations:
+          summary: "Utilisation mémoire élevée"
+          description: "Mémoire à {{ $value }}% sur {{ $labels.instance }}"
+
+      - alert: DiskSpaceLow
+        expr: (node_filesystem_avail_bytes / node_filesystem_size_bytes) * 100 < 15
+        for: 5m
+        labels:
+          severity: warning
+          component: system
+        annotations:
+          summary: "Espace disque faible"
+          description: "Seulement {{ $value }}% d'espace disponible"
+
+  # =============================================
+  # Alertes Conteneurs
+  # =============================================
+  - name: container_alerts
+    interval: 30s
+    rules:
+      - alert: ContainerDown
+        expr: up{job="cadvisor"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          component: container
+        annotations:
+          summary: "Conteneur arrêté"
+          description: "Un conteneur est DOWN : {{ $labels.name }}"
+
+      - alert: ContainerHighMemory
+        expr: container_memory_usage_bytes / container_spec_memory_limit_bytes > 0.9
+        for: 5m
+        labels:
+          severity: warning
+          component: container
+        annotations:
+          summary: "Conteneur utilise trop de mémoire"
+          description: "{{ $labels.name }} utilise {{ $value }}% de sa limite mémoire"
+
+      - alert: ContainerHighCPU
+        expr: rate(container_cpu_usage_seconds_total[5m]) > 0.8
+        for: 5m
+        labels:
+          severity: warning
+          component: container
+        annotations:
+          summary: "Conteneur utilise trop de CPU"
+          description: "{{ $labels.name }} CPU à {{ $value }}"
+
+  # =============================================
+  # Alertes Métier
+  # =============================================
+  - name: business_alerts
+    interval: 1m
+    rules:
+      - alert: LowDailySales
+        expr: sum(rate(sales_total[1h])) < 100
+        for: 2h
+        labels:
+          severity: warning
+          component: business
+        annotations:
+          summary: "Ventes quotidiennes faibles"
+          description: "Moins de 100 ventes par heure détectées"
+
+      - alert: HighProductStockAlert
+        expr: product_stock_level < product_minimum_stock
+        for: 10m
+        labels:
+          severity: warning
+          component: business
+        annotations:
+          summary: "Stock produit critique"
+          description: "Produit {{ $labels.product_name }} en rupture imminente"
+
+      - alert: BudgetOverrun
+        expr: (budget_actual / budget_planned) > 1.1
+        for: 1h
+        labels:
+          severity: warning
+          component: business
+        annotations:
+          summary: "Dépassement budgétaire"
+          description: "Budget {{ $labels.category }} dépassé de {{ $value }}%"
