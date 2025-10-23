@@ -12,7 +12,7 @@ pip install -r requirements.txt
 cp .env.example .env
 ```
 
-## DÃ©marrage
+## Démarrage
 
 ```bash
 uvicorn main:app --reload --port 3131
@@ -35,3 +35,4 @@ uvicorn main:app --reload --port 3131
 - GET /api/clients/actifs
 - GET /api/consolidation-data
 - POST /api/scenarios
+
