@@ -1,0 +1,73 @@
+# ============================================
+# docker-compose.yml - Stack complète
+# ============================================
+version: '3.8'
+
+services:
+  # Base de données PostgreSQL
+  postgres:
+    image: postgres:15-alpine
+    container_name: epm_postgres
+    environment:
+      POSTGRES_DB: epm_retail
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - epm_network
+
+  # API FastAPI
+  api:
+    build: .
+    container_name: epm_api
+    environment:
+      DB_HOST: postgres
+      DB_USER: postgres
+      DB_PASSWORD: password
+      DB_NAME: epm_retail
+      DB_PORT: 5432
+      PORT: 3131
+      N8N_WEBHOOK_URL: ${N8N_WEBHOOK_URL:-}
+    ports:
+      - "3131:3131"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./app:/app/app  # Pour le développement avec hot-reload
+    networks:
+      - epm_network
+    restart: unless-stopped
+
+  # PgAdmin (optionnel, pour administrer la DB)
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: epm_pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@epm-retail.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgres
+    networks:
+      - epm_network
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  epm_network:
+    driver: bridge

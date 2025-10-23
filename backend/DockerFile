@@ -1,0 +1,44 @@
+# ============================================
+# Dockerfile - Image FastAPI Production
+# ============================================
+FROM python:3.11-slim
+
+# Métadonnées
+LABEL maintainer="EPM Retail <contact@epm-retail.com>"
+LABEL description="API FastAPI pour EPM Retail"
+
+# Variables d'environnement
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PIP_NO_CACHE_DIR=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1
+
+# Répertoire de travail
+WORKDIR /app
+
+# Installation des dépendances système
+RUN apt-get update && apt-get install -y \
+    gcc \
+    postgresql-client \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copier les requirements et installer les dépendances Python
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copier le code de l'application
+COPY . .
+
+# Créer un utilisateur non-root
+RUN useradd -m -u 1000 appuser && chown -R appuser:appuser /app
+USER appuser
+
+# Healthcheck
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD python -c "import httpx; httpx.get('http://localhost:3131/api/health')"
+
+# Exposer le port
+EXPOSE 3131
+
+# Commande de démarrage
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "3131", "--workers", "4"]

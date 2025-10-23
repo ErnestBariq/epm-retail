@@ -1,0 +1,22 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "FastAPI: Uvicorn Launch",
+            "type": "python",
+            "request": "launch",
+            "module": "uvicorn", // <--- Le module Python à exécuter
+            "args": [
+                "backend.main:app", // <--- REMPLACEZ PAR LE CHEMIN VERS VOTRE APPLICATION (ex: nom_du_fichier:variable_app)
+                "--reload",
+                "--host",
+                "0.0.0.0",
+                "--port",
+                "3131"
+            ],
+            "cwd": "${workspaceFolder}", // S'assurer que le répertoire de travail est correct
+            "jinja": true,
+            "justMyCode": true
+        }
+    ]
+}
